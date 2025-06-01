@@ -1,0 +1,57 @@
+.typing-effect {
+  display: inline-block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  position: relative;
+  min-height: 1.2em; /* Ensure consistent height even when empty */
+}
+
+.typing-cursor {
+  display: inline-block;
+  position: relative;
+  width: 2px;
+  height: 1.2em;
+  background-color: currentColor;
+  margin-left: 2px;
+  vertical-align: middle;
+  transition: opacity 0.15s ease-in-out;
+  opacity: 0; /* Start hidden, will be controlled by JS */
+}
+
+.typing-cursor.typing {
+  animation: none; /* Disable CSS animation when controlled by JS */
+}
+
+/* Smooth cursor appearance when active */
+.typing-cursor:not(.typing) {
+  opacity: 0.8;
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.2; }
+}
+
+/* Optional: Add a subtle glow effect to the cursor */
+.typing-cursor::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: currentColor;
+  opacity: 0.2;
+  filter: blur(2px);
+  z-index: -1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Improve performance by using transform for animations */
+.typing-effect * {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

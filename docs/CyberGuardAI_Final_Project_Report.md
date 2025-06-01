@@ -1,6 +1,4 @@
 # CyberGuardAI: An Intelligent Cybersecurity Assistant
-### Final Year Project Report
-#### 2025
 
 <div style="page-break-after: always;"></div>
 

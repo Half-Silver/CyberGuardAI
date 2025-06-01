@@ -58,6 +58,7 @@ const Chat = () => {
   const [typingContent, setTypingContent] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedModel, setSelectedModel] = useState(process.env.REACT_APP_OPENROUTER_MODEL_NAME || 'nvidia/llama-3.1-nemotron-ultra-253b-v1:free');
+  const [error, setError] = useState(null);
 
   // Add global styles for animations and indicators
   useEffect(() => {
@@ -659,7 +660,45 @@ const Chat = () => {
 
     const errorHandler = (error) => {
       console.error('[Chat] WebSocket error:', error);
-      setError(error);
+      
+      let errorMessage = error.message || 'Error processing message';
+      
+      // Handle rate limit errors specifically
+      if (errorMessage.includes('Rate limit exceeded') || error.code === 429) {
+        errorMessage = 'Rate limit exceeded. Please try again later or add credits to your OpenRouter account.';
+      } else if (error.detail && error.detail.includes('streaming response')) {
+        errorMessage = 'Error processing the AI response. The service might be temporarily unavailable.';
+      }
+      
+      // Update messages to show error state if there's an active message
+      setMessages(prevMessages => {
+        const updatedMessages = [...prevMessages];
+        const lastMessageIndex = updatedMessages.length - 1;
+        
+        if (lastMessageIndex >= 0) {
+          const lastMessage = updatedMessages[lastMessageIndex];
+          if (lastMessage.role === 'user' || lastMessage.isTyping) {
+            updatedMessages[lastMessageIndex] = {
+              ...lastMessage,
+              content: lastMessage.content || '',
+              isTyping: false,
+              isStreaming: false,
+              error: errorMessage,
+              lastUpdated: Date.now()
+            };
+          }
+        } else {
+          // If no messages, add an error message
+          updatedMessages.push({
+            id: `error-${Date.now()}`,
+            role: 'assistant',
+            content: errorMessage,
+            isError: true,
+            timestamp: new Date().toISOString()
+          });
+        }
+        return updatedMessages;
+      });
       
       // If we get a connection error, try to reconnect
       if (error.message?.includes('connect') || error.message?.includes('timeout')) {
