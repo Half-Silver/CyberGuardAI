@@ -16,6 +16,13 @@ Welcome to CyberGuard AI! An intelligent chatbot that helps you with cybersecuri
 - 🔒 **Secure Authentication**
 - 📱 **Responsive Design**
 
+## 🎥 Demo
+
+<div align="center">
+  <img src="./docs/preview.gif" alt="CyberGuard AI Demo" width="800">
+  <p><em>CyberGuard AI in action - Real-time threat detection and security analysis</em></p>
+</div>
+
 ## 🚀 Quick Start
 
 ### Prerequisites
