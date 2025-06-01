@@ -1,79 +1,131 @@
 # CyberGuard AI - Your Personal Security Assistant
 
-Welcome to CyberGuard AI! This easy-to-use application helps you stay safe online by detecting potential security threats and providing helpful cybersecurity guidance.
+<div align="center">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome">
+</div>
 
-## 🌟 Key Features
+Welcome to CyberGuard AI! An intelligent chatbot that helps you with cybersecurity questions, threat detection, and security best practices.
 
-- 🔒 **Threat Detection**: Automatically identifies potential security issues in messages
-- 🛡️ **Safe Browsing**: Checks if websites are safe to visit
-- 🔍 **Code Analysis**: Examines code snippets for security vulnerabilities
-- 💬 **Friendly Chat Interface**: Simple and intuitive to use
-- 📱 **Web Access**: Use it directly in your browser
+## 🌟 Features
 
-## 🚀 Getting Started
+- 🔍 **AI-Powered Security Analysis**
+- 🛡️ **Real-time Threat Detection**
+- 💬 **Interactive Chat Interface**
+- 🔒 **Secure Authentication**
+- 📱 **Responsive Design**
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- A modern web browser (Chrome, Firefox, Safari, or Edge)
-- Internet connection
 
-### Quick Start (For End Users)
+- Node.js (v16 or later)
+- Python (v3.8 or later)
+- npm or yarn
+- Git
 
-1. **Open the Application**
-   - Launch the application by opening the provided URL in your web browser
+### Installation
 
-2. **Create an Account**
-   - Click on "Sign Up"
-   - Enter your email and create a password
-   - Check your email to verify your account
-
-3. **Start Using CyberGuard AI**
-   - Log in with your credentials
-   - Type your question or paste suspicious content
-   - Get instant security analysis and recommendations
-
-### For Developers
-
-If you need to set up a development environment:
-
-1. **Install Requirements**
+1. **Clone the repository**
    ```bash
-   # Clone the repository
-   git clone [repository-url]
-   cd CyberGuardAI_Restructured
+   git clone https://github.com/Half-Silver/CyberGuardAI.git
+   cd CyberGuardAI
+   ```
 
+2. **Set up the Backend**
+   ```bash
+   # Navigate to backend directory
+   cd backend-node
+   
    # Install Python dependencies
    pip install -r requirements.txt
-   ```
-
-2. **Configure Environment**
-   - Copy `.env.example` to `.env`
-   - Add your API keys (contact support if you need these)
-
-3. **Run the Application**
-   ```bash
-   # Start the backend server
-   python -m src.api.server
    
-   # In a new terminal, start the frontend
-   cd frontend
-   npm install
-   npm run dev
+   # Set up environment variables
+   cp .env.example .env
+   # Edit .env with your configuration
    ```
-   The application will be available at `http://localhost:3000`
 
-## 🤔 Need Help?
+3. **Set up the Frontend**
+   ```bash
+   # Navigate to frontend directory
+   cd ../frontend
+   
+   # Install Node.js dependencies
+   npm install
+   # or
+   yarn install
+   ```
 
-If you encounter any issues or have questions:
+### Running the Application
 
-1. Check the "Help" section in the application
-2. Contact our support team at projectx.jslab@gmail.com
-3. Visit our [Help Center](https://example.com/help)
+1. **Start the Backend Server**
+   ```bash
+   # From the backend-node directory
+   node src/server.js
+   ```
+   The backend will run on `http://localhost:5000`
 
-## 🔒 Security Note
+2. **Start the Frontend Development Server**
+   ```bash
+   # From the frontend directory
+   npm run dev
+   # or
+   yarn dev
+   ```
+   The frontend will be available at `http://localhost:3000`
 
-- Never share your login credentials
-- Always verify the website URL before entering sensitive information
-- Keep your browser and operating system up to date
+3. **Access the Application**
+   - Open your browser and go to `http://localhost:3000`
+   - Sign up for a new account or log in if you already have one
+   - Start chatting with CyberGuard AI!
+
+## 📂 Project Structure
+
+```
+CyberGuardAI/
+├── backend-node/         # Node.js backend server
+│   ├── src/
+│   │   ├── config/     # Configuration files
+│   │   ├── controllers/  # Request handlers
+│   │   ├── models/      # Database models
+│   │   └── server.js    # Main server file
+│   └── .env.example     # Example environment variables
+│
+├── frontend/            # React frontend
+│   ├── public/          # Static files
+│   └── src/
+│       ├── components/  # React components
+│       ├── context/     # React context providers
+│       └── pages/       # Page components
+│
+└── docs/               # Documentation
+```
+
+## 🔧 Configuration
+
+1. **Backend Configuration**
+   - Copy `.env.example` to `.env` in the `backend-node` directory
+   - Update the following variables:
+     ```
+     PORT=5000
+     MONGODB_URI=your_mongodb_connection_string
+     JWT_SECRET=your_jwt_secret
+     OPENROUTER_API_KEY=your_openrouter_api_key
+     ```
+
+2. **Frontend Configuration**
+   - Update API endpoints in `frontend/src/config.js` if needed
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📝 License
 
@@ -81,11 +133,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-For more information, please contact:
 - Email: projectx.jslab@gmail.com
-- Phone: [Your Contact Number]
-- Website: [Your Website URL]
+- GitHub: [@Half-Silver](https://github.com/Half-Silver)
+- Project Link: [https://github.com/Half-Silver/CyberGuardAI](https://github.com/Half-Silver/CyberGuardAI)
 
 ---
 
-Thank you for choosing CyberGuard AI! Stay safe online! 🛡️
+<div align="center">
+  Made with ❤️ by the CyberGuard AI Team
+</div>
