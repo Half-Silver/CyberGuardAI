@@ -66,7 +66,7 @@ If you need to set up a development environment:
 If you encounter any issues or have questions:
 
 1. Check the "Help" section in the application
-2. Contact our support team at [support-email@example.com]
+2. Contact our support team at projectx.jslab@gmail.com
 3. Visit our [Help Center](https://example.com/help)
 
 ## 🔒 Security Note
@@ -82,7 +82,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Contact
 
 For more information, please contact:
-- Email: [your-email@example.com]
+- Email: projectx.jslab@gmail.com
 - Phone: [Your Contact Number]
 - Website: [Your Website URL]
 
