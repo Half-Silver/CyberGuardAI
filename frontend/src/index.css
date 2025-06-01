@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes typingPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-secondary-50 dark:bg-secondary-900 text-secondary-900 dark:text-secondary-50;
+    @apply min-h-screen font-sans;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md transition-all duration-200 font-medium;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-200 text-secondary-900 hover:bg-secondary-300;
+  }
+  
+  .btn-danger {
+    @apply bg-red-500 text-white hover:bg-red-600;
+  }
+  
+  .input {
+    @apply px-4 py-2 rounded-md border border-secondary-300 dark:border-secondary-700;
+    @apply bg-white dark:bg-secondary-800 text-secondary-900 dark:text-secondary-50;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-secondary-800 rounded-lg shadow-md p-4;
+  }
+  
+  .threat-indicator {
+    @apply flex items-center px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .threat-low {
+    @apply bg-threat-low/20 text-threat-low border border-threat-low/30;
+  }
+  
+  .threat-medium {
+    @apply bg-threat-medium/20 text-threat-medium border border-threat-medium/30;
+  }
+  
+  .threat-high {
+    @apply bg-threat-high/20 text-threat-high border border-threat-high/30;
+  }
+}

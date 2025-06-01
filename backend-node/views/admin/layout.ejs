@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | CyberGuard AI</title>
+  <!-- Tailwind CSS from CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom configuration for Tailwind -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+            secondary: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 min-h-screen flex flex-col">
+  <!-- Top Navigation -->
+  <nav class="bg-white dark:bg-secondary-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <div class="flex-shrink-0 flex items-center">
+            <span class="text-primary-600 dark:text-primary-400 font-bold text-xl">CyberGuard AI</span>
+            <span class="ml-2 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-2 py-1 rounded-lg">Dev UI</span>
+          </div>
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <a href="/admin" class="<%= title.includes('Admin') && !title.includes('Tester') && !title.includes('Analyzer') && !title.includes('Settings') ? 'border-primary-500 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300' %> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Dashboard
+            </a>
+            <a href="/admin/chat" class="<%= title.includes('Chat Tester') ? 'border-primary-500 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300' %> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Chat Tester
+            </a>
+            <a href="/admin/security" class="<%= title.includes('Security Analyzer') ? 'border-primary-500 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300' %> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Security Analyzer
+            </a>
+            <a href="/admin/settings" class="<%= title.includes('Settings') ? 'border-primary-500 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300' %> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Settings
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <button id="darkModeToggle" class="p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <i class="fa-solid fa-moon dark:hidden"></i>
+            <i class="fa-solid fa-sun hidden dark:block"></i>
+          </button>
+          <a href="http://localhost:5173" target="_blank" class="ml-3 bg-primary-50 dark:bg-primary-900 hover:bg-primary-100 dark:hover:bg-primary-800 text-primary-700 dark:text-primary-300 px-3 py-2 rounded-md text-sm font-medium flex items-center">
+            <i class="fa-solid fa-desktop mr-2"></i> Open Frontend App
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu, show/hide based on menu state -->
+    <div class="sm:hidden" id="mobileMenu">
+      <div class="pt-2 pb-3 space-y-1">
+        <a href="/admin" class="<%= title.includes('Admin') && !title.includes('Tester') && !title.includes('Analyzer') && !title.includes('Settings') ? 'bg-primary-50 dark:bg-primary-900 border-primary-500 text-primary-700 dark:text-primary-300' : 'border-transparent text-secondary-500 hover:bg-secondary-50 dark:hover:bg-secondary-800 hover:border-secondary-300 hover:text-secondary-700 dark:hover:text-secondary-300' %> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+          Dashboard
+        </a>
+        <a href="/admin/chat" class="<%= title.includes('Chat Tester') ? 'bg-primary-50 dark:bg-primary-900 border-primary-500 text-primary-700 dark:text-primary-300' : 'border-transparent text-secondary-500 hover:bg-secondary-50 dark:hover:bg-secondary-800 hover:border-secondary-300 hover:text-secondary-700 dark:hover:text-secondary-300' %> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+          Chat Tester
+        </a>
+        <a href="/admin/security" class="<%= title.includes('Security Analyzer') ? 'bg-primary-50 dark:bg-primary-900 border-primary-500 text-primary-700 dark:text-primary-300' : 'border-transparent text-secondary-500 hover:bg-secondary-50 dark:hover:bg-secondary-800 hover:border-secondary-300 hover:text-secondary-700 dark:hover:text-secondary-300' %> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+          Security Analyzer
+        </a>
+        <a href="/admin/settings" class="<%= title.includes('Settings') ? 'bg-primary-50 dark:bg-primary-900 border-primary-500 text-primary-700 dark:text-primary-300' : 'border-transparent text-secondary-500 hover:bg-secondary-50 dark:hover:bg-secondary-800 hover:border-secondary-300 hover:text-secondary-700 dark:hover:text-secondary-300' %> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-secondary-900 dark:text-secondary-100"><%= title %></h1>
+    </div>
+    
+    <%- body %>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-secondary-800 shadow-inner py-4 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <div class="text-sm text-secondary-500">
+          &copy; 2025 CyberGuard AI - Development Interface
+        </div>
+        <div class="text-sm text-secondary-500">
+          <span id="backendStatus">
+            <i class="fa-solid fa-circle-notch fa-spin mr-1"></i> 
+            Checking status...
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script>
+    // Toggle mobile menu
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.querySelector('#mobileMenuButton');
+      const mobileMenu = document.querySelector('#mobileMenu');
+      
+      if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+          const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+          mobileMenuButton.setAttribute('aria-expanded', !expanded);
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+      
+      // Dark mode toggle
+      const darkModeToggle = document.querySelector('#darkModeToggle');
+      
+      if (darkModeToggle) {
+        // Check user preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        
+        darkModeToggle.addEventListener('click', function() {
+          if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+          } else {
+            document.documentElement.classList.add('dark');
+            localStorage.theme = 'dark';
+          }
+        });
+      }
+      
+      // Check backend status
+      const checkBackendStatus = async () => {
+        try {
+          const response = await fetch('/api/status');
+          const data = await response.json();
+          
+          if (data.status === 'operational') {
+            document.getElementById('backendStatus').innerHTML = 
+              '<i class="fa-solid fa-circle text-green-500 mr-1"></i> Backend operational';
+          } else {
+            document.getElementById('backendStatus').innerHTML = 
+              '<i class="fa-solid fa-circle text-yellow-500 mr-1"></i> Backend status: ' + data.status;
+          }
+        } catch (error) {
+          document.getElementById('backendStatus').innerHTML = 
+            '<i class="fa-solid fa-circle text-red-500 mr-1"></i> Backend unavailable';
+        }
+      };
+      
+      checkBackendStatus();
+      // Check status every 30 seconds
+      setInterval(checkBackendStatus, 30000);
+    });
+  </script>
+  
+  <!-- Page Specific JavaScript -->
+  <% if (typeof scripts !== 'undefined') { %>
+    <%- scripts %>
+  <% } %>
+</body>
+</html>

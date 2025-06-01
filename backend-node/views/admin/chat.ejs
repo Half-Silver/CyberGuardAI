@@ -1,0 +1,402 @@
+<%- include('layout', { title: 'CyberGuard AI Chat Tester', body: `
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <!-- Sidebar -->
+  <div class="lg:col-span-1">
+    <div class="bg-white dark:bg-secondary-800 shadow-md rounded-lg p-4">
+      <div class="flex items-center mb-4">
+        <div class="bg-primary-100 dark:bg-primary-900/30 p-2 rounded-full">
+          <i class="fa-solid fa-cog text-primary-600 dark:text-primary-400"></i>
+        </div>
+        <h2 class="ml-3 text-lg font-semibold">Chat Settings</h2>
+      </div>
+      
+      <div class="space-y-4">
+        <!-- Model Selection -->
+        <div>
+          <label for="modelSelect" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">AI Model</label>
+          <select id="modelSelect" class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            <option value="" selected>Loading models...</option>
+          </select>
+        </div>
+        
+        <!-- Session Settings -->
+        <div>
+          <label for="sessionId" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Session ID</label>
+          <div class="flex">
+            <input type="text" id="sessionId" readonly class="block w-full py-2 px-3 border border-secondary-300 dark:border-secondary-700 bg-secondary-50 dark:bg-secondary-800 rounded-l-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="No active session">
+            <button id="newSessionBtn" class="inline-flex items-center py-2 px-3 border border-l-0 border-secondary-300 dark:border-secondary-700 bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 rounded-r-md hover:bg-secondary-200 dark:hover:bg-secondary-600 focus:outline-none">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- AI Behavior -->
+        <div>
+          <label for="aiTemperature" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Temperature: <span id="tempValue">0.7</span></label>
+          <input type="range" id="aiTemperature" min="0" max="1" step="0.1" value="0.7" class="w-full h-2 bg-secondary-200 dark:bg-secondary-700 rounded-lg appearance-none cursor-pointer">
+        </div>
+        
+        <!-- Security Analysis -->
+        <div class="mt-2">
+          <label class="inline-flex items-center">
+            <input type="checkbox" id="enableSecurityAnalysis" checked class="form-checkbox h-4 w-4 text-primary-600 transition duration-150 ease-in-out">
+            <span class="ml-2 text-sm text-secondary-700 dark:text-secondary-300">Security Analysis</span>
+          </label>
+        </div>
+        
+        <!-- Clear Chat -->
+        <button id="clearChatBtn" class="w-full mt-2 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/20 hover:bg-red-200 dark:hover:bg-red-900/40 focus:outline-none">
+          <i class="fa-solid fa-trash-can mr-2"></i> Clear Chat
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Chat Area -->
+  <div class="lg:col-span-3 flex flex-col h-[calc(100vh-12rem)]">
+    <div class="bg-white dark:bg-secondary-800 shadow-md rounded-lg flex flex-col flex-grow overflow-hidden">
+      <!-- Chat Header -->
+      <div class="px-4 py-3 border-b border-secondary-200 dark:border-secondary-700 flex justify-between items-center">
+        <div class="flex items-center">
+          <span id="connectionStatus" class="flex items-center text-sm font-medium text-red-600 dark:text-red-400">
+            <i class="fa-solid fa-circle-xmark mr-1"></i> Not connected
+          </span>
+        </div>
+        <div>
+          <button id="connectBtn" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-500 dark:bg-primary-700 dark:hover:bg-primary-600 focus:outline-none">
+            Connect
+          </button>
+        </div>
+      </div>
+      
+      <!-- Chat Messages -->
+      <div id="chatMessages" class="flex-grow overflow-y-auto p-4 space-y-4 bg-secondary-50 dark:bg-secondary-900">
+        <div class="text-center text-secondary-500 dark:text-secondary-400 p-4">
+          <i class="fa-solid fa-robot text-4xl mb-2 text-primary-400 dark:text-primary-600"></i>
+          <p>Start a conversation with CyberGuard AI</p>
+          <p class="text-xs mt-2">This is a testing interface for development purposes.</p>
+        </div>
+      </div>
+      
+      <!-- Chat Input -->
+      <div class="border-t border-secondary-200 dark:border-secondary-700 p-4">
+        <form id="chatForm" class="flex">
+          <input id="messageInput" type="text" class="flex-grow py-2 px-4 mr-2 border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" placeholder="Type a message...">
+          <button type="submit" id="sendMessageBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-500 dark:bg-primary-700 dark:hover:bg-primary-600 focus:outline-none">
+            <i class="fa-solid fa-paper-plane mr-2"></i> Send
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+` }) %>
+
+<script>
+  // Chat Tester scripts
+  document.addEventListener('DOMContentLoaded', async function() {
+    // DOM Elements
+    const modelSelect = document.getElementById('modelSelect');
+    const sessionIdInput = document.getElementById('sessionId');
+    const newSessionBtn = document.getElementById('newSessionBtn');
+    const clearChatBtn = document.getElementById('clearChatBtn');
+    const aiTemperature = document.getElementById('aiTemperature');
+    const tempValue = document.getElementById('tempValue');
+    const securityAnalysisToggle = document.getElementById('enableSecurityAnalysis');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectBtn = document.getElementById('connectBtn');
+    
+    // State
+    let socket = null;
+    let currentSessionId = null;
+    let token = localStorage.getItem('demo_admin_token');
+    let selectedModel = '';
+    
+    // Functions
+    const createDummyToken = async () => {
+      if (!token) {
+        try {
+          // Create a demo admin user if not exists
+          const signupRes = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: 'admin@cyberguard.ai',
+              fullname: 'Admin User',
+              password: 'admin123'
+            })
+          });
+          
+          if (signupRes.ok) {
+            const data = await signupRes.json();
+            token = data.token;
+            localStorage.setItem('demo_admin_token', token);
+          } else {
+            // Try login instead
+            const loginRes = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: 'admin@cyberguard.ai',
+                password: 'admin123'
+              })
+            });
+            
+            if (loginRes.ok) {
+              const data = await loginRes.json();
+              token = data.token;
+              localStorage.setItem('demo_admin_token', token);
+            }
+          }
+        } catch (error) {
+          console.error('Auth error:', error);
+        }
+      }
+    };
+    
+    const fetchModels = async () => {
+      try {
+        const res = await fetch('/api/admin/models', {
+          headers: { 'Authorization': \`Bearer \${token}\` }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          
+          if (data.models && data.models.length > 0) {
+            modelSelect.innerHTML = '';
+            
+            // Get default model
+            const configRes = await fetch('/api/admin/config', {
+              headers: { 'Authorization': \`Bearer \${token}\` }
+            });
+            
+            let defaultModel = '';
+            if (configRes.ok) {
+              const configData = await configRes.json();
+              defaultModel = configData.defaultModel;
+              selectedModel = defaultModel;
+            }
+            
+            // Add models to select
+            data.models.forEach(model => {
+              const option = document.createElement('option');
+              option.value = model.id;
+              option.textContent = \`\${model.name || model.id} (\${model.provider || 'Unknown'})\`;
+              option.selected = model.id === defaultModel;
+              modelSelect.appendChild(option);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching models:', error);
+      }
+    };
+    
+    const createSession = async () => {
+      try {
+        const res = await fetch('/api/chat/session', {
+          method: 'POST',
+          headers: { 'Authorization': \`Bearer \${token}\` }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          currentSessionId = data.sessionId;
+          sessionIdInput.value = currentSessionId;
+          
+          // Clear chat messages
+          chatMessages.innerHTML = '<div class="text-center text-secondary-500 dark:text-secondary-400 py-2">New session started</div>';
+        }
+      } catch (error) {
+        console.error('Error creating session:', error);
+      }
+    };
+    
+    const connectSocket = () => {
+      if (socket) {
+        socket.disconnect();
+      }
+      
+      // Connect to WebSocket with token
+      const socketUrl = \`ws://\${window.location.hostname}:\${window.location.port}/api/chat?token=\${token}\`;
+      socket = io(socketUrl);
+      
+      // Socket events
+      socket.on('connect', () => {
+        connectionStatus.innerHTML = '<i class="fa-solid fa-circle-check mr-1 text-green-500"></i> Connected';
+        connectBtn.textContent = 'Disconnect';
+      });
+      
+      socket.on('disconnect', () => {
+        connectionStatus.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Disconnected';
+        connectBtn.textContent = 'Connect';
+      });
+      
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
+        addMessage('system', \`Error: \${error.detail || error.error || 'Connection error'}\`);
+      });
+      
+      socket.on('message', (message) => {
+        addMessage(message.role, message.content, message.threatLevel);
+      });
+      
+      socket.on('processingStatus', (status) => {
+        if (status.status === 'analyzing') {
+          addMessage('system', 'Analyzing message for security threats...', null, true);
+        } else if (status.status === 'threatAnalyzed') {
+          // Update the temporary message with threat info
+          const tempMsg = document.querySelector('.temp-message');
+          if (tempMsg) {
+            if (status.threatLevel === 'HIGH') {
+              tempMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-500 mr-1"></i> High security threat detected! Generating response...';
+            } else if (status.threatLevel === 'MEDIUM') {
+              tempMsg.innerHTML = '<i class="fa-solid fa-exclamation-circle text-yellow-500 mr-1"></i> Medium security concern detected. Generating response...';
+            } else {
+              tempMsg.innerHTML = '<i class="fa-solid fa-shield-check text-green-500 mr-1"></i> No significant threats detected. Generating response...';
+            }
+          }
+        }
+      });
+      
+      socket.on('threatAlert', (alert) => {
+        // Display a prominent alert
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 my-2';
+        alertDiv.innerHTML = \`
+          <div class="flex items-center font-medium">
+            <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+            \${alert.message}
+          </div>
+          <div class="mt-1 text-sm">\${alert.analysis}</div>
+        \`;
+        chatMessages.appendChild(alertDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    };
+    
+    const addMessage = (role, content, threatLevel = null, isTemp = false) => {
+      const messageDiv = document.createElement('div');
+      
+      if (isTemp) {
+        messageDiv.className = 'temp-message p-2 text-sm text-secondary-500 dark:text-secondary-400 bg-secondary-100 dark:bg-secondary-800/50 rounded-lg';
+        messageDiv.innerHTML = content;
+      } else if (role === 'user') {
+        messageDiv.className = 'flex justify-end';
+        messageDiv.innerHTML = \`
+          <div class="bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 p-3 rounded-lg max-w-3/4">
+            <div class="font-medium">You</div>
+            <div>\${content}</div>
+          </div>
+        \`;
+      } else if (role === 'assistant') {
+        let threatBadge = '';
+        if (threatLevel === 'HIGH') {
+          threatBadge = '<span class="ml-2 text-xs bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 px-2 py-1 rounded">HIGH RISK</span>';
+        } else if (threatLevel === 'MEDIUM') {
+          threatBadge = '<span class="ml-2 text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 px-2 py-1 rounded">MEDIUM RISK</span>';
+        }
+        
+        messageDiv.className = 'flex justify-start';
+        messageDiv.innerHTML = \`
+          <div class="bg-white dark:bg-secondary-800 p-3 rounded-lg shadow-sm max-w-3/4">
+            <div class="font-medium flex items-center">
+              CyberGuard AI \${threatBadge}
+            </div>
+            <div>\${content}</div>
+          </div>
+        \`;
+      } else if (role === 'system') {
+        messageDiv.className = 'text-center text-xs text-secondary-500 dark:text-secondary-400 py-1';
+        messageDiv.innerHTML = content;
+      }
+      
+      // Remove temporary message if exists
+      if (!isTemp) {
+        const tempMsg = document.querySelector('.temp-message');
+        if (tempMsg) {
+          tempMsg.remove();
+        }
+      }
+      
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+    
+    // Initialize
+    await createDummyToken();
+    await fetchModels();
+    await createSession();
+    
+    // Event listeners
+    modelSelect.addEventListener('change', () => {
+      selectedModel = modelSelect.value;
+    });
+    
+    aiTemperature.addEventListener('input', () => {
+      tempValue.textContent = aiTemperature.value;
+    });
+    
+    newSessionBtn.addEventListener('click', createSession);
+    
+    clearChatBtn.addEventListener('click', async () => {
+      if (currentSessionId) {
+        try {
+          await fetch(\`/api/chat/session/\${currentSessionId}\`, {
+            method: 'DELETE',
+            headers: { 'Authorization': \`Bearer \${token}\` }
+          });
+          
+          chatMessages.innerHTML = '<div class="text-center text-secondary-500 dark:text-secondary-400 py-2">Chat cleared</div>';
+        } catch (error) {
+          console.error('Error clearing chat:', error);
+        }
+      }
+    });
+    
+    connectBtn.addEventListener('click', () => {
+      if (socket && socket.connected) {
+        socket.disconnect();
+      } else {
+        connectSocket();
+      }
+    });
+    
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const message = messageInput.value.trim();
+      if (!message) return;
+      
+      if (!currentSessionId) {
+        createSession();
+      }
+      
+      if (!socket || !socket.connected) {
+        addMessage('system', 'Not connected to server. Please connect first.');
+        return;
+      }
+      
+      // Send message
+      socket.emit('message', {
+        sessionId: currentSessionId,
+        message: message,
+        model: selectedModel
+      });
+      
+      // Add message to chat
+      addMessage('user', message);
+      
+      // Clear input
+      messageInput.value = '';
+    });
+    
+    // Auto connect
+    connectSocket();
+  });
+</script>

@@ -1,0 +1,52 @@
+{
+  "name": "cyberguard-ai-backend",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node tests/run-tests.js"
+  },
+  "keywords": [
+    "cyberguard",
+    "ai",
+    "security",
+    "chatbot",
+    "development"
+  ],
+  "author": "CyberGuard AI Team",
+  "license": "ISC",
+  "description": "Development backend UI for CyberGuard AI with Node.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-ws": "^5.0.2",
+    "form-data": "^4.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^6.10.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pdf-parse": "^1.1.1",
+    "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
+    "tesseract.js": "^6.0.1",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "socket.io-client": "^4.8.1",
+    "supertest": "^7.1.0"
+  }
+}
